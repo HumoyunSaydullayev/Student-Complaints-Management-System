@@ -1,0 +1,163 @@
+/* ===========================
+   Glass UI – unified stylesheet
+   (v2) — student/admin sahifalari uchun
+   =========================== */
+
+:root{
+  --bg:#0e0e10; --bg2:#14171a;
+  --text:#e6e6e6; --muted:#aeb6c7;
+  --border:rgba(255,255,255,.18);
+  --cardA:rgba(255,255,255,.10); --cardB:rgba(255,255,255,.06);
+  --brand:#eaf0ff; --primary:#3b82f6;
+  --danger:#ff6b6b; --ok:#45e0b5;
+  --radius-xl:22px; --radius-md:14px;
+  --shadow:0 16px 36px rgba(0,0,0,.35);
+}
+
+*{ box-sizing:border-box; }
+html,body{height:100%;}
+body{
+  margin:0; color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;
+  background:linear-gradient(135deg,var(--bg),var(--bg2));
+}
+
+/* Links */
+a{ color:#dfe6ff; text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+/* Layout */
+.container{ width:min(1120px,92%); margin-inline:auto; position:relative; }
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 0; gap:12px;
+}
+.brand{
+  background:linear-gradient(135deg, var(--cardA), var(--cardB));
+  border:1px solid rgba(255,255,255,.20);
+  color:var(--brand); padding:10px 14px; border-radius:12px; font-weight:700;
+  display:flex; align-items:center; gap:10px;
+}
+nav a{ margin-left:12px; padding:8px 12px; border-radius:10px; }
+nav a.ghost{ border:1px solid var(--border); background:rgba(255,255,255,.06); }
+.muted{ color:var(--muted); }
+
+/* Utilities */
+.grid-2{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+@media (max-width:860px){ .grid-2{ grid-template-columns:1fr; } }
+.max-480{ max-width:480px; margin-inline:auto; }
+.max-640{ max-width:640px; margin-inline:auto; }
+.max-720{ max-width:720px; margin-inline:auto; }
+.mb-8{ margin-bottom:8px; } .mt-4{ margin-top:4px; } .mt-8{ margin-top:8px; }
+.w-100{ width:100%; }
+.row{ display:flex; flex-wrap:wrap; gap:12px; }
+.justify-content-center{ justify-content:center; }
+
+/* Cards (two class names supported for moslik) */
+.glass-card,
+.card.glass{
+  backdrop-filter: blur(18px);
+  background:linear-gradient(135deg,var(--cardA),var(--cardB));
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+/* Hero / KPIs */
+.hero{ text-align:center; margin:18px 0 24px; }
+.stat-row{ display:flex; gap:12px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+.kpi{ font-size:26px; font-weight:800; }
+
+/* Pills & Chips */
+.pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 10px; border-radius:999px; font-size:12px;
+  border:1px solid var(--border); background:rgba(255,255,255,.06);
+}
+.chip{
+  display:inline-block; padding:6px 10px; border-radius:10px;
+  border:1px solid var(--border); background:rgba(255,255,255,.06);
+  margin-right:6px;
+}
+
+/* Forms */
+label{ display:block; font-weight:600; margin:10px 0 6px; }
+input,select,textarea{
+  width:100%; color:var(--text);
+  background:rgba(23,26,31,.90);
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:10px 12px; outline:none; transition:.2s border,.2s box-shadow;
+}
+input:focus,select:focus,textarea:focus{
+  border-color: var(--primary);
+  box-shadow:0 0 0 4px rgba(59,130,246,.18);
+}
+textarea{ min-height:120px; resize:vertical; }
+
+/* Form errors (Django) */
+.errorlist{ margin:6px 0; padding-left:18px; color:#ffb3b3; }
+.is-invalid{ border-color:#ff9ea0 !important; box-shadow:0 0 0 4px rgba(255,107,107,.16) !important; }
+
+/* Buttons */
+.btn{
+  display:inline-block; border:none; cursor:pointer;
+  background:linear-gradient(180deg,#9cc4ff,#6ea8ff 45%,#5b8bff);
+  color:#0a0d14; padding:10px 16px; border-radius:12px; font-weight:800;
+  box-shadow:0 10px 20px rgba(110,168,255,.35), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .08s ease, filter .2s ease;
+}
+.btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+.btn:active{ transform:translateY(0); }
+.btn.w-100{ width:100%; }
+
+.btn.secondary{
+  background:linear-gradient(180deg,#cda7ff,#a979ff 45%,#8f6bff);
+  box-shadow:0 10px 20px rgba(169,121,255,.35), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn.danger{
+  background:linear-gradient(180deg,#ff9ea0,#ff6b6b 45%,#ff4b4b);
+  box-shadow:0 10px 20px rgba(255,107,107,.35), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn.ghost{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border); color:#d3d7dd; box-shadow:none;
+}
+
+/* Toolbar */
+.toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:10px 0 14px; flex-wrap:wrap; }
+
+/* Tables */
+.table{ overflow:auto; border-radius:16px; }
+.table.glass{
+  overflow:auto; border-radius:16px; border:1px solid var(--border);
+  background:rgba(0,0,0,.25);
+}
+.table table{ width:100%; border-collapse:separate; border-spacing:0; }
+.table thead th{
+  position:sticky; top:0; z-index:1;
+  background:rgba(255,255,255,.06);
+  text-align:left; padding:12px 14px; color:#dbe6ff;
+}
+.table th, .table td{ padding:12px 14px; }
+.table tbody tr{ border-top:1px solid rgba(255,255,255,.08); transition:background .2s; }
+.table tbody tr:hover{ background:rgba(255,255,255,.04); }
+
+/* Code blocks */
+pre.body{
+  white-space:pre-wrap; background:rgba(0,0,0,.28);
+  border:1px solid var(--border); border-radius:14px; padding:12px;
+}
+
+/* Small helper classes for spacing in filters/pagination */
+.inline-form{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+/* Optional: thin scrollbar for tables */
+.table::-webkit-scrollbar{ height:10px; width:10px; }
+.table::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.18); border-radius:10px; }
+.table::-webkit-scrollbar-track{ background:rgba(255,255,255,.06); }
+
+/* Responsive tweaks */
+@media (max-width:560px){
+  .topbar{ flex-direction:column; align-items:flex-start; }
+}

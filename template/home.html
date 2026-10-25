@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block title %}Bosh sahifa - Shikoyatlar Tizimi{% endblock %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.hero-section {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background circles */
+.hero-section::before,
+.hero-section::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    animation: float 20s infinite ease-in-out;
+}
+
+.hero-section::before {
+    width: 400px;
+    height: 400px;
+    top: -100px;
+    right: -100px;
+}
+
+.hero-section::after {
+    width: 300px;
+    height: 300px;
+    bottom: -50px;
+    left: -50px;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 60px;
+    animation: fadeInDown 1s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    line-height: 1.2;
+}
+
+.hero-header .subtitle {
+    font-size: 1.4rem;
+    opacity: 0.95;
+    max-width: 700px;
+    margin: 0 auto;
+    font-weight: 400;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+    animation: fadeInUp 1s ease 0.3s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 35px 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.stat-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.stat-card h3 {
+    font-size: 3rem;
+    color: #1f2937;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.stat-card p {
+    color: #6b7280;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+/* Login Options */
+.login-section-title {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+    animation: fadeIn 1s ease 0.6s both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.login-section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.login-section-title p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.login-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 35px;
+    margin-bottom: 60px;
+    animation: fadeInUp 1s ease 0.8s both;
+}
+
+.login-card {
+    background: white;
+    border-radius: 25px;
+    padding: 45px 35px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: var(--card-gradient);
+}
+
+.login-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--card-gradient);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 0;
+}
+
+.login-card:hover::after {
+    opacity: 0.03;
+}
+
+.login-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+}
+
+.student-card {
+    --card-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-card {
+    --card-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.official-card {
+    --card-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.login-icon {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: white;
+    position: relative;
+    z-index: 1;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.student-card .login-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-card .login-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.official-card .login-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.login-card:hover .login-icon {
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.login-card h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #1f2937;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+.login-card p {
+    color: #6b7280;
+    margin-bottom: 30px;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    position: relative;
+    z-index: 1;
+}
+
+.login-btn {
+    padding: 15px 45px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.student-card .login-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-card .login-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.official-card .login-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.login-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+
+/* Features Section */
+.features {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 50px 40px;
+    border-radius: 30px;
+    backdrop-filter: blur(20px);
+    color: white;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: fadeInUp 1s ease 1s both;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 35px;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+}
+
+.feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.feature-item p {
+    opacity: 0.95;
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+@media (max-width: 768px) {
+    .hero-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-header .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .login-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card h3 {
+        font-size: 2.5rem;
+    }
+}
+</style>
+
+<div class="hero-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="hero-header">
+            <h1>🎓 Shikoyatlar Tizimi</h1>
+            <p class="subtitle">Universitetda yuzaga kelgan muammolarni hal qilishning eng oson yo'li</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <h3>{{ stats.total }}</h3>
+                <p>Jami Murojaatlar</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📨</div>
+                <h3>{{ stats.open }}</h3>
+                <p>Yangi</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <h3>{{ stats.in_progress }}</h3>
+                <p>Jarayonda</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <h3>{{ stats.resolved }}</h3>
+                <p>Hal Qilingan</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <h3>{{ stats.rejected }}</h3>
+                <p>Rad Etildi</p>
+            </div>
+        </div>
+
+        <!-- Login Section Title -->
+        <div class="login-section-title">
+            <h2>Tizimga Kirish</h2>
+            <p>O'zingizga mos rolni tanlang</p>
+        </div>
+
+        <!-- Login Options -->
+        <div class="login-options">
+            <!-- Talaba -->
+            <a href="{% url 'login_view' 'student' %}" class="login-card student-card">
+                <div class="login-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h2>Talabalar uchun</h2>
+                <p>Profilga kirib, shikoyat yoki taklifingizni yuboring va jarayonni real vaqt rejimida kuzating.</p>
+                <span class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Kirish
+                </span>
+            </a>
+
+            <!-- Admin -->
+            <a href="{% url 'login_view' 'admin' %}" class="login-card admin-card">
+                <div class="login-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2>Ma'muriyat uchun</h2>
+                <p>Shikoyatlarni biriktirish, holatini o'zgartirish, izohlar qoldirish va hisobotlar olish.</p>
+                <span class="login-btn">
+                    <i class="fas fa-shield-alt"></i> Admin Panel
+                </span>
+            </a>
+
+            <!-- Masul Shaxs -->
+            <a href="{% url 'login_view' 'official' %}" class="login-card official-card">
+                <div class="login-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h2>Masul Shaxslar</h2>
+                <p>O'zingizga biriktirilgan shikoyatlarni ko'ring, javob bering va holatni yangilang.</p>
+                <span class="login-btn">
+                    <i class="fas fa-briefcase"></i> Kirish
+                </span>
+            </a>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <h2>Platformaning Afzalliklari</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">🚀</span>
+                    <h3>Tez va Oson</h3>
+                    <p>Bir necha daqiqada shikoyat yuboring</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔒</span>
+                    <h3>Xavfsiz</h3>
+                    <p>Ma'lumotlaringiz himoyalangan</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <h3>Kuzatuv</h3>
+                    <p>Real vaqtda status o'zgarishlarini ko'ring</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💬</span>
+                    <h3>Muloqot</h3>
+                    <p>Masul shaxslar bilan bevosita aloqa</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

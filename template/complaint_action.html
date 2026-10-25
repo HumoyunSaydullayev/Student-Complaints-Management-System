@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+{% block title %}{{ config.title }}{% endblock %}
+{% block content %}
+<style>
+.action-page {
+    background: {{ config.gradient }};
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.action-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.action-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+    text-align: center;
+}
+
+.action-icon {
+    font-size: 4rem;
+    color: {{ config.color }};
+    margin-bottom: 1rem;
+}
+
+.action-header h1 {
+    color: #1f2937;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 2rem;
+}
+
+.action-header p {
+    color: #6b7280;
+    font-size: 1.05rem;
+}
+
+/* Complaint Info */
+.complaint-info {
+    {% if action == 'resolve' %}
+        background: #f0fdf4;
+        border-left: 4px solid #10b981;
+    {% elif action == 'reject' %}
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+    {% else %}
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+    {% endif %}
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.complaint-info h3 {
+    {% if action == 'resolve' %}
+        color: #065f46;
+    {% elif action == 'reject' %}
+        color: #991b1b;
+    {% else %}
+        color: #1e40af;
+    {% endif %}
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.complaint-info p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+.complaint-content {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Info Box */
+.info-box {
+    {% if action == 'resolve' %}
+        background: #f0fdf4;
+        border: 2px solid #86efac;
+    {% elif action == 'reject' %}
+        background: #fff7ed;
+        border: 2px solid #fb923c;
+    {% else %}
+        background: #eff6ff;
+        border: 2px solid #93c5fd;
+    {% endif %}
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: start;
+    gap: 15px;
+}
+
+.info-box i {
+    font-size: 2rem;
+    {% if action == 'resolve' %}
+        color: #10b981;
+    {% elif action == 'reject' %}
+        color: #ea580c;
+    {% else %}
+        color: #3b82f6;
+    {% endif %}
+    margin-top: 5px;
+}
+
+.info-box div h4 {
+    {% if action == 'resolve' %}
+        color: #065f46;
+    {% elif action == 'reject' %}
+        color: #c2410c;
+    {% else %}
+        color: #1e40af;
+    {% endif %}
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.info-box div p {
+    color: #6b7280;
+    margin: 0;
+    text-align: left;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 150px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: {{ config.color }};
+    box-shadow: 0 0 0 3px {{ config.color }}1a;
+}
+
+.helper-text {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Buttons */
+.btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: {{ config.gradient }};
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px {{ config.color }}4d;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px {{ config.color }}66;
+}
+
+.btn-cancel {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+}
+</style>
+
+<div class="action-page">
+    <div class="action-card">
+        <div class="action-header">
+            <div class="action-icon">
+                <i class="fas {{ config.icon }}"></i>
+            </div>
+            <h1>{{ config.title }}</h1>
+            <p>{{ config.description }}</p>
+        </div>
+
+        <!-- Complaint Info -->
+        <div class="complaint-info">
+            <h3>{{ complaint.title }}</h3>
+            <p><strong>Talaba:</strong> {{ complaint.student.full_name }} ({{ complaint.student.student_id }})</p>
+            <p><strong>Kategoriya:</strong> {{ complaint.category.name }}</p>
+            <p><strong>Status:</strong> {{ complaint.get_status_display }}</p>
+            <p><strong>Sana:</strong> {{ complaint.created_at|date:"d.m.Y H:i" }}</p>
+            
+            <div class="complaint-content">
+                <p><strong>Mazmuni:</strong></p>
+                <p>{{ complaint.content }}</p>
+            </div>
+        </div>
+
+        <!-- Action Specific Info -->
+        {% if action == 'accept' %}
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <h4>Qabul qilish</h4>
+                    <p>Siz bu shikoyat ustida ishlashni boshlaysiz va status "Jarayonda" ga o'zgaradi.</p>
+                </div>
+            </div>
+        {% elif action == 'resolve' %}
+            <div class="info-box">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h4>Hal qilish</h4>
+                    <p>Ko'rilgan choralar va natija haqida batafsil yozing. Bu javob talabaga ko'rinadi.</p>
+                </div>
+            </div>
+        {% elif action == 'reject' %}
+            <div class="info-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>Diqqat!</h4>
+                    <p>Shikoyatni rad etish jarayoni qaytarilmaydi. Sabab ko'rsatish majburiy va talabaga ko'rinadi.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if config.show_form %}
+                <!-- Form Field (for resolve/reject) -->
+                <div class="form-group">
+                    <label>{{ config.field_label }}</label>
+                    <textarea 
+                        name="{{ config.field_name }}" 
+                        class="form-control"
+                        required
+                        placeholder="{{ config.placeholder }}"
+                    ></textarea>
+                    <div class="helper-text">
+                        <i class="fas fa-info-circle"></i>
+                        <span>
+                            {% if action == 'resolve' %}
+                                Ko'rilgan choralar va natija haqida batafsil yozing
+                            {% else %}
+                                Talaba uchun tushunarli sabab yozing
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="btn-submit"
+                {% if action == 'reject' %}
+                    onclick="return confirm('Rostdan ham rad etmoqchimisiz?')"
+                {% endif %}
+            >
+                <i class="fas {{ config.icon }}"></i> {{ config.button_text }}
+            </button>
+
+            <!-- Cancel Button -->
+            <a href="{% url 'complaint_detail' complaint.uuid %}" class="btn-cancel">
+                <i class="fas fa-arrow-left"></i> 
+                {% if action == 'accept' %}Ortga Qaytish{% else %}Bekor Qilish{% endif %}
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}O'chirish Tasdiqlash{% endblock %}
+{% block content %}
+<style>
+.delete-page {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.delete-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.delete-icon {
+    font-size: 5rem;
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.delete-card h2 {
+    color: #ef4444;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.item-info {
+    background: #fef2f2;
+    padding: 25px;
+    border-radius: 15px;
+    margin: 25px 0;
+    border-left: 4px solid #ef4444;
+}
+
+.item-info h3 {
+    color: #991b1b;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.item-info p {
+    color: #6b7280;
+    margin: 8px 0;
+    font-size: 1rem;
+}
+
+.item-info .item-name {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.2rem;
+}
+
+.warning-box {
+    background: #fff7ed;
+    border: 2px solid #fb923c;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: start;
+    gap: 15px;
+}
+
+.warning-box i {
+    font-size: 2rem;
+    color: #ea580c;
+    margin-top: 5px;
+}
+
+.warning-box div h4 {
+    color: #c2410c;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.warning-box div p {
+    color: #6b7280;
+    margin: 0;
+    text-align: left;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-confirm {
+    flex: 1;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: 15px 30px;
+    background: #6b7280;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
+}
+</style>
+
+<div class="delete-page">
+    <div class="delete-card">
+        <div class="delete-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <h2>
+            {% if item_type == 'user' %}
+                {% if user_type == 'student' %}
+                    Talabani O'chirmoqchimisiz?
+                {% else %}
+                    Masul Shaxsni O'chirmoqchimisiz?
+                {% endif %}
+            {% elif item_type == 'complaint' %}
+                Shikoyatni O'chirmoqchimisiz?
+            {% endif %}
+        </h2>
+
+        <div class="item-info">
+            {% if item_type == 'user' %}
+                <h3>{{ item.full_name }}</h3>
+                {% if user_type == 'student' %}
+                    <p><strong>Student ID:</strong> {{ item.student_id }}</p>
+                    <p><strong>Guruh:</strong> {{ item.group_name|default:"—" }}</p>
+                    {% if item.faculty %}
+                        <p><strong>Fakultet:</strong> {{ item.faculty.name }}</p>
+                    {% endif %}
+                {% else %}
+                    <p><strong>Lavozim:</strong> {{ item.position }}</p>
+                    {% if item.department %}
+                        <p><strong>Bo'lim:</strong> {{ item.department.name }}</p>
+                    {% endif %}
+                {% endif %}
+            {% elif item_type == 'complaint' %}
+                <h3 class="item-name">{{ item.title }}</h3>
+                <p><strong>Talaba:</strong> {{ item.student.full_name }}</p>
+                <p><strong>Kategoriya:</strong> {{ item.category.name }}</p>
+                <p><strong>Status:</strong> {{ item.get_status_display }}</p>
+                <p><strong>Sana:</strong> {{ item.created_at|date:"d.m.Y H:i" }}</p>
+            {% endif %}
+        </div>
+
+        <div class="warning-box">
+            <i class="fas fa-shield-alt"></i>
+            <div>
+                <h4>Diqqat!</h4>
+                <p>
+                    Bu amalni qaytarib bo'lmaydi. O'chirilgan ma'lumotlarni tiklash mumkin emas.
+                    {% if item_type == 'user' and user_type == 'student' %}
+                        Talaba bilan bog'liq barcha shikoyatlar ham o'chiriladi.
+                    {% elif item_type == 'user' %}
+                        Masul shaxsga biriktirilgan shikoyatlar biriktirilmagan holatga o'tadi.
+                    {% elif item_type == 'complaint' %}
+                        Shikoyat bilan bog'liq barcha izohlar ham o'chiriladi.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="action-buttons">
+                <button type="submit" class="btn-confirm" onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?')">
+                    <i class="fas fa-trash"></i> Ha, O'chirish
+                </button>
+                <a href="{% url back_url %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Bekor Qilish
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Shikoyat Yuborish{% endblock %}
+{% block content %}
+<style>
+.create-page { 
+    background: linear-gradient(135deg, #667eea, #764ba2); 
+    min-height: 100vh; 
+    padding: 40px 20px; 
+}
+
+.form-card { 
+    max-width: 900px; 
+    margin: 0 auto; 
+    background: white; 
+    padding: 40px; 
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h1 {
+    color: #1f2937;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.form-header p {
+    color: #6b7280;
+    font-size: 1.05rem;
+}
+
+.form-group { 
+    margin-bottom: 25px; 
+}
+
+.form-group label { 
+    display: block; 
+    margin-bottom: 10px; 
+    font-weight: 700;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.form-group label .required {
+    color: #ef4444;
+}
+
+.form-control { 
+    width: 100%; 
+    padding: 14px; 
+    border: 2px solid #e5e7eb; 
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* MASUL SHAXSLAR DROPDOWN - DESKTOP VERSIYA KABI */
+.official-select {
+    position: relative;
+}
+
+.official-select select {
+    appearance: none;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 1rem center;
+    padding-right: 3rem;
+}
+
+.official-select option {
+    padding: 10px;
+}
+
+.helper-text {
+    margin-top: 8px;
+    font-size: 0.875rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.helper-text i {
+    color: #3b82f6;
+}
+
+.btn-submit { 
+    width: 100%;
+    padding: 16px 40px; 
+    background: linear-gradient(135deg, #10b981, #059669); 
+    color: white; 
+    border: none; 
+    border-radius: 12px; 
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cancel {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+}
+</style>
+
+<div class="create-page">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>📝 Yangi Shikoyat</h1>
+            <p>Muammoingizni batafsil yozing va tegishli masul shaxsni tanlang</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- SARLAVHA -->
+            <div class="form-group">
+                <label>
+                    Sarlavha <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    class="form-control" 
+                    placeholder="Masalan: Talabalar uyida suv yo'q"
+                    required
+                    maxlength="200"
+                >
+            </div>
+
+            <!-- MAZMUN -->
+            <div class="form-group">
+                <label>
+                    Muammo tavsifi <span class="required">*</span>
+                </label>
+                <textarea 
+                    name="content" 
+                    class="form-control" 
+                    rows="6" 
+                    placeholder="Muammoni batafsil tasvirlab bering..."
+                    required
+                ></textarea>
+            </div>
+
+            <!-- KATEGORIYA -->
+            <div class="form-group">
+                <label>
+                    Kategoriya <span class="required">*</span>
+                </label>
+                <select name="category" class="form-control" required>
+                    <option value="">Tanlang...</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- MASUL SHAXS TANLASH - DESKTOP VERSIYA KABI -->
+            <div class="form-group official-select">
+                <label>
+                    Kimga murojaat qilmoqchisiz? <span class="required">*</span>
+                </label>
+                <select name="assigned_to" class="form-control" required>
+                    <option value="">Masul shaxsni tanlang...</option>
+                    {% for official in officials %}
+                    <option value="{{ official.id }}">
+                        {{ official.full_name }} - {{ official.position }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="helper-text">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Muammongiz bilan bevosita shug'ullanadigan masul shaxsni tanlang</span>
+                </div>
+            </div>
+
+            <!-- PRIORITET -->
+            <div class="form-group">
+                <label>Muhimlik darajasi</label>
+                <select name="priority" class="form-control">
+                    <option value="low">🟢 Past - Kechiktirilishi mumkin</option>
+                    <option value="medium" selected>🟡 O'rta - Tezda hal qilish kerak</option>
+                    <option value="high">🔴 Yuqori - Juda dolzarb</option>
+                </select>
+            </div>
+
+            <!-- TUGMALAR -->
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Yuborish
+            </button>
+            
+            <a href="{% url 'student_dashboard' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Bekor qilish
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

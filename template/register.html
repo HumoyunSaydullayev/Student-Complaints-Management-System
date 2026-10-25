@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Ro'yxatdan O'tish{% endblock %}
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+* { font-family: 'Poppins', sans-serif; }
+
+.register-page {
+    min-height: 100vh;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-box {
+    max-width: 650px;
+    margin: 0 auto;
+    background: white;
+    padding: 45px;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.register-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    font-size: 35px;
+    color: white;
+}
+
+.register-box h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    color: #1f2937;
+    font-weight: 700;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-control {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.links a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+</style>
+
+<div class="register-page">
+    <div class="register-box">
+        <div class="register-icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <h2>📝 Ro'yxatdan O'tish</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div style="padding: 14px; background: #fee2e2; color: #991b1b; border-radius: 10px; margin-bottom: 20px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>To'liq Ism *</label>
+                <input type="text" name="full_name" class="form-control" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID *</label>
+                    <input type="text" name="student_id" class="form-control" placeholder="2021001" required>
+                </div>
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Parol *</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Parolni Tasdiqlash *</label>
+                    <input type="password" name="password2" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Guruh</label>
+                    <input type="text" name="group_name" class="form-control" placeholder="IT-21">
+                </div>
+                <div class="form-group">
+                    <label>Kurs</label>
+                    <select name="course" class="form-control">
+                        <option value="">Tanlang</option>
+                        <option value="1">1-kurs</option>
+                        <option value="2">2-kurs</option>
+                        <option value="3">3-kurs</option>
+                        <option value="4">4-kurs</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Fakultet</label>
+                <select name="faculty" class="form-control">
+                    <option value="">Tanlang</option>
+                    {% for faculty in faculties %}
+                    <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-register">
+                Ro'yxatdan O'tish
+            </button>
+        </form>
+
+        <div class="links">
+            <p>Akkauntingiz bormi? <a href="{% url 'login_view' 'student' %}">Kirish</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

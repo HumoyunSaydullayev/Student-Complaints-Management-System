@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Talabalar - Admin{% endblock %}
+{% block content %}
+<style>
+.admin-page { 
+    background: linear-gradient(135deg, #f093fb, #f5576c); 
+    min-height: 100vh; 
+    padding: 30px 20px; 
+}
+
+.admin-card { 
+    max-width: 1600px; 
+    margin: 0 auto; 
+    background: white; 
+    padding: 30px; 
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.admin-card h1 {
+    color: #1f2937;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px;
+    /* PANJARA YO'Q */
+    border: none;
+}
+
+.admin-table th { 
+    background: #f3f4f6; 
+    padding: 15px; 
+    text-align: left;
+    font-weight: 700;
+    color: #1f2937;
+    /* PANJARA YO'Q */
+    border: none;
+}
+
+.admin-table td { 
+    padding: 15px; 
+    /* PANJARA YO'Q */
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:hover {
+    background: #f9fafb;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-edit {
+    padding: 8px 16px;
+    background: #f59e0b;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-edit:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+}
+
+.btn-delete { 
+    padding: 8px 16px; 
+    background: #ef4444; 
+    color: white; 
+    border-radius: 6px; 
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+</style>
+
+<div class="admin-page">
+    <div class="admin-card">
+        <h1>
+            <i class="fas fa-user-graduate"></i>
+            Talabalar Boshqaruvi
+        </h1>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>To'liq Ism</th>
+                    <th>Student ID</th>
+                    <th>Guruh</th>
+                    <th>Fakultet</th>
+                    <th>Shikoyatlar</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <!-- SANASH: forloop.counter -->
+                    <td>#{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ student.full_name }}</strong>
+                    </td>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.group_name|default:"—" }}</td>
+                    <td>
+                        {% if student.faculty %}
+                            {{ student.faculty.name }}
+                        {% else %}
+                            <span style="color: #9ca3af;">Tanlanmagan</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.total_complaints %}
+                            {{ student.total_complaints }} ta
+                        {% else %}
+                            {{ student.complaints.count }} ta
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- TAHRIRLASH TUGMASI - YANGI -->
+                            <a href="{% url 'edit_user' user_id=student.id user_type='student' %}" class="btn-edit">
+                                <i class="fas fa-edit"></i> Tahrirlash
+                            </a>
+                            
+                            <!-- O'CHIRISH -->
+                            <a href="{% url 'delete_user' user_id=student.id user_type='student' %}" 
+                               class="btn-delete" 
+                >
+                                <i class="fas fa-trash"></i> O'chirish
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="fas fa-user-graduate"></i>
+                            <p>Hali talabalar ro'yxatdan o'tmagan</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

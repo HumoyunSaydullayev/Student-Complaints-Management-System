@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% block title %}Shikoyatni Tahrirlash - Admin{% endblock %}
+{% block content %}
+<style>
+.edit-page {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.edit-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.edit-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.edit-header h1 {
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 10px;
+}
+
+.edit-header p {
+    color: #6b7280;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.form-group label .required {
+    color: #ef4444;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #f093fb;
+    box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+}
+
+.btn-cancel {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+}
+
+.info-box {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-box p {
+    color: #1e40af;
+    margin: 0.25rem 0;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="edit-page">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h1>
+                <i class="fas fa-edit"></i>
+                Shikoyatni Tahrirlash
+            </h1>
+            <p>Shikoyat ma'lumotlarini o'zgartiring</p>
+        </div>
+
+        <!-- JORIY MA'LUMOTLAR -->
+        <div class="info-box">
+            <p><strong>Talaba:</strong> {{ complaint.student.full_name }} ({{ complaint.student.student_id }})</p>
+            <p><strong>Yaratilgan:</strong> {{ complaint.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>UUID:</strong> {{ complaint.uuid }}</p>
+        </div>
+
+        <form method="POST" action="{% url 'update_complaint_admin' complaint.uuid %}">
+            {% csrf_token %}
+
+            <!-- SARLAVHA -->
+            <div class="form-group">
+                <label>
+                    Sarlavha <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    class="form-control" 
+                    value="{{ complaint.title }}"
+                    required
+                    maxlength="200"
+                >
+            </div>
+
+            <!-- MAZMUN -->
+            <div class="form-group">
+                <label>
+                    Mazmun <span class="required">*</span>
+                </label>
+                <textarea 
+                    name="content" 
+                    class="form-control" 
+                    rows="8" 
+                    required
+                >{{ complaint.content }}</textarea>
+            </div>
+
+            <!-- KATEGORIYA VA PRIORITET -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>
+                        Kategoriya <span class="required">*</span>
+                    </label>
+                    <select name="category" class="form-control" required>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if complaint.category == cat %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Prioritet</label>
+                    <select name="priority" class="form-control">
+                        <option value="low" {% if complaint.priority == 'low' %}selected{% endif %}>
+                            🟢 Past
+                        </option>
+                        <option value="medium" {% if complaint.priority == 'medium' %}selected{% endif %}>
+                            🟡 O'rta
+                        </option>
+                        <option value="high" {% if complaint.priority == 'high' %}selected{% endif %}>
+                            🔴 Yuqori
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- MASUL SHAXS VA STATUS -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Masul Shaxs</label>
+                    <select name="assigned_to" class="form-control">
+                        <option value="">Tanlanmagan</option>
+                        {% for official in officials %}
+                        <option value="{{ official.id }}" 
+                                {% if complaint.assigned_to == official %}selected{% endif %}>
+                            {{ official.full_name }} - {{ official.position }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" class="form-control">
+                        <option value="open" {% if complaint.status == 'open' %}selected{% endif %}>
+                            📤 Ochiq
+                        </option>
+                        <option value="in_progress" {% if complaint.status == 'in_progress' %}selected{% endif %}>
+                            ⏳ Jarayonda
+                        </option>
+                        <option value="resolved" {% if complaint.status == 'resolved' %}selected{% endif %}>
+                            ✅ Hal qilindi
+                        </option>
+                        <option value="rejected" {% if complaint.status == 'rejected' %}selected{% endif %}>
+                            ❌ Rad etildi
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TUGMALAR -->
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-save"></i> Saqlash
+            </button>
+
+            <a href="{% url 'admin_complaints' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Bekor qilish
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

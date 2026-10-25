@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+{% block title %}Shikoyat Detali{% endblock %}
+{% block content %}
+<style>
+.detail-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+.back-btn { 
+    display: inline-block; 
+    padding: 0.75rem 1.5rem; 
+    background: #6b7280; 
+    color: white; 
+    text-decoration: none; 
+    border-radius: 0.5rem; 
+    margin-bottom: 1.5rem; 
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.back-btn:hover { background: #4b5563; }
+
+.detail-card { 
+    background: white; 
+    border-radius: 1rem; 
+    padding: 2rem; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    margin-bottom: 2rem; 
+}
+
+.detail-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: start; 
+    margin-bottom: 1.5rem; 
+}
+
+.detail-title { 
+    font-size: 1.75rem; 
+    font-weight: 700; 
+    color: #1f2937; 
+    margin-bottom: 0.5rem; 
+}
+
+.status-badge { 
+    padding: 0.5rem 1rem; 
+    border-radius: 0.5rem; 
+    font-weight: 600; 
+    font-size: 0.875rem; 
+}
+
+.status-open { background: #fef3c7; color: #92400e; }
+.status-in_progress { background: #dbeafe; color: #1e40af; }
+.status-resolved { background: #d1fae5; color: #065f46; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+
+.detail-meta { 
+    display: flex; 
+    gap: 2rem; 
+    margin: 1rem 0; 
+    padding: 1rem; 
+    background: #f9fafb; 
+    border-radius: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.detail-meta-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    color: #6b7280; 
+}
+
+.detail-content { 
+    margin-top: 1.5rem; 
+    padding: 1.5rem; 
+    background: #f9fafb; 
+    border-radius: 0.75rem; 
+    line-height: 1.8; 
+    color: #374151; 
+}
+
+/* MASUL SHAXS TUGMALARI */
+.official-actions {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-top: 2rem;
+    border: 2px solid #fbbf24;
+}
+
+.official-actions h3 {
+    color: #92400e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-accept {
+    flex: 1;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-accept:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-resolve {
+    flex: 1;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-resolve:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-reject {
+    flex: 1;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-reject:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* HAMMUALLIF SECTION */
+.coauthors-section {
+    background: #eff6ff;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.coauthors-section h3 {
+    color: #1e40af;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.coauthors-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.coauthor-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    border: 2px solid #3b82f6;
+}
+
+.coauthor-badge .remove-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-note {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fef3c7;
+    border-radius: 0.5rem;
+    border-left: 4px solid #f59e0b;
+    color: #92400e;
+    font-size: 0.875rem;
+}
+
+.comments-section { margin-top: 2rem; }
+
+.comments-title { 
+    font-size: 1.25rem; 
+    font-weight: 700; 
+    margin-bottom: 1rem; 
+    color: #1f2937; 
+}
+
+.comment { 
+    padding: 1rem; 
+    background: #f9fafb; 
+    border-radius: 0.75rem; 
+    margin-bottom: 1rem; 
+    border-left: 3px solid #6366f1; 
+}
+
+.comment-header { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 0.5rem; 
+}
+
+.comment-author { font-weight: 600; color: #1f2937; }
+.comment-date { color: #9ca3af; font-size: 0.875rem; }
+.comment-content { color: #4b5563; line-height: 1.6; white-space: pre-wrap; }
+
+.add-comment { margin-top: 1.5rem; }
+
+.form-control { 
+    width: 100%; 
+    padding: 0.875rem; 
+    border: 2px solid #e5e7eb; 
+    border-radius: 0.75rem; 
+    font-size: 1rem; 
+    resize: vertical; 
+}
+
+.form-control:focus { outline: none; border-color: #6366f1; }
+
+.btn-primary { 
+    padding: 0.875rem 2rem; 
+    background: #6366f1; 
+    color: white; 
+    border: none; 
+    border-radius: 0.75rem; 
+    font-weight: 600; 
+    cursor: pointer; 
+    margin-top: 1rem;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover { background: #4f46e5; }
+
+.assign-section { 
+    background: #fef3c7; 
+    padding: 1.5rem; 
+    border-radius: 0.75rem; 
+    margin-top: 2rem; 
+}
+
+.assign-section h3 { margin-bottom: 1rem; color: #92400e; }
+
+.assign-form select { 
+    width: 100%; 
+    padding: 0.875rem; 
+    border: 2px solid #fbbf24; 
+    border-radius: 0.75rem; 
+    margin-bottom: 1rem; 
+}
+
+.closed-notice {
+    background: #f3f4f6;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 600;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .action-buttons { flex-direction: column; }
+}
+</style>
+
+<div class="detail-page">
+    <a href="{% if user.role == 'student' %}{% url 'my_complaints' %}{% elif user.role == 'admin' %}{% url 'admin_complaints' %}{% else %}{% url 'official_complaints' %}{% endif %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+
+    <div class="detail-card">
+        <div class="detail-header">
+            <div>
+                <h1 class="detail-title">{{ complaint.title }}</h1>
+                <div class="detail-meta">
+                    <div class="detail-meta-item"><i class="fas fa-user"></i> Asosiy muallif: <strong>{{ complaint.student.full_name }}</strong></div>
+                    <div class="detail-meta-item"><i class="fas fa-calendar"></i> {{ complaint.created_at|date:"d.m.Y H:i" }}</div>
+                    <div class="detail-meta-item"><i class="fas fa-tag"></i> {{ complaint.category.name }}</div>
+                    {% if complaint.assigned_to %}
+                    <div class="detail-meta-item"><i class="fas fa-user-tie"></i> Javobgar: <strong>{{ complaint.assigned_to.full_name }}</strong></div>
+                    {% endif %}
+                </div>
+            </div>
+            <span class="status-badge status-{{ complaint.status }}">
+                {% if complaint.status == 'open' %}Ochiq
+                {% elif complaint.status == 'in_progress' %}Jarayonda
+                {% elif complaint.status == 'resolved' %}Hal qilindi
+                {% else %}Rad etildi{% endif %}
+            </span>
+        </div>
+
+        <div class="detail-content">
+            <p>{{ complaint.content|linebreaks }}</p>
+        </div>
+
+        <!-- MASUL SHAXS TUGMALARI (faqat o'ziga biriktirilgan shikoyat uchun) -->
+        {% if user.role == 'official' and complaint.assigned_to == user %}
+        <div class="official-actions">
+            <h3><i class="fas fa-tasks"></i> Amallar</h3>
+            <div class="action-buttons">
+                {% if complaint.status == 'open' %}
+                    <a href="{% url 'complaint_action' uuid=complaint.uuid action='accept' %}" class="btn-accept">
+                        <i class="fas fa-check"></i> Qabul Qilish va Ishga Olish
+                    </a>
+                    <a href="{% url 'complaint_action' uuid=complaint.uuid action='reject' %}" class="btn-reject">
+                        <i class="fas fa-times"></i> Rad Etish
+                    </a>
+                {% elif complaint.status == 'in_progress' %}
+                    <a href="{% url 'complaint_action' uuid=complaint.uuid action='resolve' %}" class="btn-resolve">
+                        <i class="fas fa-check-circle"></i> Hal Qilindi
+                    </a>
+                    <a href="{% url 'complaint_action' uuid=complaint.uuid action='reject' %}" class="btn-reject">
+                        <i class="fas fa-times"></i> Rad Etish
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- HAL QILINDI / RAD ETILDI JAVOB -->
+        {% if complaint.status == 'resolved' or complaint.status == 'rejected' %}
+        <div style="background:{% if complaint.status == 'resolved' %}#d1fae5{% else %}#fee2e2{% endif %}; padding:1.5rem; border-radius:0.75rem; margin-top:2rem; border-left:4px solid {% if complaint.status == 'resolved' %}#10b981{% else %}#ef4444{% endif %};">
+            <h3 style="color:{% if complaint.status == 'resolved' %}#065f46{% else %}#991b1b{% endif %}; margin-bottom:1rem;">
+                {% if complaint.status == 'resolved' %}<i class="fas fa-check-circle"></i> Shikoyat Hal Qilindi{% else %}<i class="fas fa-times-circle"></i> Shikoyat Rad Etildi{% endif %}
+            </h3>
+            <p style="color:#374151; line-height:1.6; white-space:pre-wrap;">{{ complaint.resolution_note|default:"Izoh kiritilmagan" }}</p>
+            <p style="color:#6b7280; margin-top:1rem; font-size:0.875rem;">
+                <i class="fas fa-user"></i> {{ complaint.resolved_by.full_name }} — {{ complaint.resolved_at|date:"d.m.Y H:i" }}
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- HAMMUALLIFLAR -->
+        {% if complaint.co_authors.exists %}
+        <div class="coauthors-section">
+            <h3><i class="fas fa-users"></i> Hammualliflar ({{ complaint.co_authors.count }})</h3>
+            <div class="coauthors-list">
+                {% for coauthor in complaint.co_authors.all %}
+                <div class="coauthor-badge">
+                    <i class="fas fa-user"></i> {{ coauthor.full_name }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% elif user == complaint.student %}
+        <div class="coauthors-section">
+            <h3><i class="fas fa-users"></i> Hammualliflar</h3>
+            <p style="color:#6b7280;">Hozircha hammuallif yo'q</p>
+            <div class="info-note">
+                <i class="fas fa-info-circle"></i> <strong>Eslatma:</strong> Boshqa talabalar "Barcha shikoyatlar" sahifasidan ushbu shikoyatga hammuallif bo'lib qo'shilishlari mumkin.
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ADMIN UCHUN BIRIKTIRISH -->
+        {% if user.role == 'admin' %}
+        <div class="assign-section">
+            <h3>Masul shaxsga biriktirish</h3>
+            <form method="POST" action="{% url 'complaint_action' uuid=complaint.uuid action='assign' %}">
+                {% csrf_token %}
+                <select name="assigned_to" class="form-control" required>
+                    <option value="">--- Tanlang ---</option>
+                    {% for official in officials %}
+                    <option value="{{ official.id }}" {% if complaint.assigned_to == official %}selected{% endif %}>{{ official.full_name }} ({{ official.position|default:"Lavozim ko'rsatilmagan" }})</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-primary">Biriktirish</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- IZOHLAR -->
+    <div class="comments-section">
+        <h2 class="comments-title"><i class="fas fa-comments"></i> Izohlar ({{ comments.count }})</h2>
+        
+        {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author"><i class="fas fa-user-circle"></i> {{ comment.user.full_name }}</span>
+                <span class="comment-date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="comment-content">{{ comment.content|linebreaks }}</div>
+        </div>
+        {% empty %}
+        <p style="text-align:center; padding:2rem; color:#9ca3af;">Hali izohlar yo'q. Birinchi bo'lib izoh qoldiring!</p>
+        {% endfor %}
+
+        {% if complaint.status == 'open' or complaint.status == 'in_progress' %}
+            {% if user == complaint.student or user in complaint.co_authors.all or user.role == 'official' or user.role == 'admin' %}
+            <div class="add-comment">
+                <form method="POST" action="{% url 'add_comment' complaint.uuid %}">
+                    {% csrf_token %}
+                    <textarea name="content" class="form-control" rows="4" placeholder="Izohingizni yozing..." required></textarea>
+                    <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Izoh yuborish</button>
+                </form>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="closed-notice">
+            <i class="fas fa-lock"></i> Shikoyat yopilganligi sababli izoh qo'shib bo'lmaydi.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

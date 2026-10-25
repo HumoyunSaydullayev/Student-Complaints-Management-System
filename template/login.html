@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block title %}{{ role_display }} Kirish{% endblock %}
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ role_color }};
+    padding: 20px;
+}
+
+.login-container {
+    background: white;
+    padding: 3rem 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 450px;
+    width: 100%;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-icon {
+    width: 80px;
+    height: 80px;
+    background: {{ role_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-header h2 {
+    font-size: 1.75rem;
+    color: #1f2937;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.login-header p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* Error Messages */
+.error-messages {
+    margin-bottom: 1.5rem;
+}
+
+.error-alert {
+    background: #fee2e2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+    color: #1f2937;
+}
+
+.form-control::placeholder {
+    color: #9ca3af;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: '{{ primary_color }}';
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: {{ role_color }};
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.form-footer a {
+    color: '{{ primary_color }}';
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.form-footer p {
+    margin: 0.5rem 0;
+    color: #6b7280;
+}
+</style>
+
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-icon">
+                <i class="fas {{ role_icon }}"></i>
+            </div>
+            <h2>{{ role_display }} Kirish</h2>
+            <p>
+                {% if role == 'student' %}
+                    Student ID va parolingizni kiriting
+                {% elif role == 'admin' %}
+                    Administrator tizimiga kirish
+                {% else %}
+                    Masul shaxs tizimiga kirish
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Error Messages -->
+        {% if messages %}
+        <div class="error-messages">
+            {% for message in messages %}
+            <div class="error-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% if role == 'student' %}
+                <!-- STUDENT LOGIN -->
+                <div class="form-group">
+                    <label for="student_id">Student ID</label>
+                    <input 
+                        type="text" 
+                        id="student_id"
+                        name="student_id" 
+                        class="form-control" 
+                        placeholder="Masalan: 2021001" 
+                        required 
+                        autofocus
+                    >
+                </div>
+            {% else %}
+                <!-- ADMIN / OFFICIAL LOGIN -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username"
+                        name="username" 
+                        class="form-control" 
+                        placeholder="Username" 
+                        required 
+                        autofocus
+                    >
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="password">Parol</label>
+                <input 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    class="form-control" 
+                    placeholder="••••••••" 
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-sign-in-alt"></i> Kirish
+            </button>
+        </form>
+
+        <div class="form-footer">
+            {% if role == 'student' %}
+                <p>Akkauntingiz yo'qmi? <a href="{% url 'register' %}">Ro'yxatdan o'tish</a></p>
+            {% endif %}
+            <p><a href="{% url 'index' %}"><i class="fas fa-arrow-left"></i> Orqaga</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

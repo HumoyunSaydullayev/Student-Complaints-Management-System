@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Shikoyatlar - Admin{% endblock %}
+{% block content %}
+<style>
+.admin-page { 
+    background: linear-gradient(135deg, #f093fb, #f5576c); 
+    min-height: 100vh; 
+    padding: 30px 20px; 
+}
+
+.admin-card { 
+    max-width: 1600px; 
+    margin: 0 auto; 
+    background: white; 
+    padding: 30px; 
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.admin-card h1 {
+    color: #1f2937;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px;
+    /* PANJARA YO'Q */
+    border: none;
+}
+
+.admin-table th { 
+    background: #f3f4f6; 
+    padding: 15px; 
+    text-align: left;
+    font-weight: 700;
+    color: #1f2937;
+    /* PANJARA YO'Q */
+    border: none;
+}
+
+.admin-table td { 
+    padding: 15px; 
+    /* PANJARA YO'Q - faqat pastda border */
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:hover {
+    background: #f9fafb;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-view { 
+    padding: 8px 16px; 
+    background: #3b82f6; 
+    color: white; 
+    border-radius: 6px; 
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-view:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.btn-edit {
+    padding: 8px 16px;
+    background: #f59e0b;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-edit:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+}
+
+.btn-delete { 
+    padding: 8px 16px; 
+    background: #ef4444; 
+    color: white; 
+    border-radius: 6px; 
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* STATUS BADGE */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-open { background: #fef3c7; color: #92400e; }
+.status-in_progress { background: #dbeafe; color: #1e40af; }
+.status-resolved { background: #d1fae5; color: #065f46; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+</style>
+
+<div class="admin-page">
+    <div class="admin-card">
+        <h1>
+            <i class="fas fa-clipboard-list"></i>
+            Barcha Shikoyatlar
+        </h1>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Talaba</th>
+                    <th>Sarlavha</th>
+                    <th>Kategoriya</th>
+                    <th>Masul Shaxs</th>
+                    <th>Status</th>
+                    <th>Sana</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in complaints %}
+                <tr>
+                    <!-- SANASH: forloop.counter ishlatish -->
+                    <td>#{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ c.student.full_name }}</strong><br>
+                        <small style="color: #6b7280;">{{ c.student.student_id }}</small>
+                    </td>
+                    <td>
+                        <strong>{{ c.title|truncatewords:8 }}</strong>
+                    </td>
+                    <td>
+                        <i class="fas fa-tag" style="color: {{ c.category.color }};"></i>
+                        {{ c.category.name }}
+                    </td>
+                    <td>
+                        {% if c.assigned_to %}
+                            <i class="fas fa-user-tie"></i>
+                            {{ c.assigned_to.full_name }}
+                        {% else %}
+                            <span style="color: #9ca3af;">Biriktirilmagan</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ c.status }}">
+                            {{ c.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ c.created_at|date:"d.m.Y" }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'complaint_detail' c.uuid %}" class="btn-view">
+                                <i class="fas fa-eye"></i> Ko'rish
+                            </a>
+                            <a href="{% url 'edit_complaint_admin' c.uuid %}" class="btn-edit">
+                                <i class="fas fa-edit"></i> Tahrirlash
+                            </a>
+                            <a href="{% url 'delete_complaint_admin' c.uuid %}" 
+                               class="btn-delete" 
+                               onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?')">
+                                <i class="fas fa-trash"></i> O'chirish
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Hali shikoyatlar yo'q</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

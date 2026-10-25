@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block title %}Barcha Shikoyatlar{% endblock %}
+{% block content %}
+<style>
+.complaints-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.page-header p {
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.complaints-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.complaint-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    border-left: 4px solid #6366f1;
+}
+
+.complaint-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.complaint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.complaint-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-open { background: #fef3c7; color: #92400e; }
+.status-in_progress { background: #dbeafe; color: #1e40af; }
+
+.complaint-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.75rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.complaint-content {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 1rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.complaint-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.btn-view {
+    flex: 1;
+    padding: 0.75rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.btn-view:hover {
+    background: #4f46e5;
+}
+
+.btn-join {
+    flex: 1;
+    padding: 0.75rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-join:hover {
+    background: #059669;
+}
+
+.btn-leave {
+    flex: 1;
+    padding: 0.75rem;
+    background: #f59e0b;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-leave:hover {
+    background: #d97706;
+}
+
+.btn-disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.coauthors-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #dbeafe;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    color: #1e40af;
+    margin-top: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .complaints-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="complaints-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-list-ul"></i>
+            Barcha Shikoyatlar
+        </h1>
+        <p>Boshqa talabalarning shikoyatlarini ko'ring va hammuallif bo'ling</p>
+    </div>
+
+    {% if complaints %}
+    <div class="complaints-grid">
+        {% for c in complaints %}
+        <div class="complaint-card">
+            <div class="complaint-header">
+                <div style="flex: 1;">
+                    <div class="complaint-title">{{ c.title }}</div>
+                    <span class="status-badge status-{{ c.status }}">
+                        {% if c.status == 'open' %}Ochiq
+                        {% elif c.status == 'in_progress' %}Jarayonda
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="complaint-meta">
+                <div class="meta-item">
+                    <i class="fas fa-user"></i>
+                    <strong>{{ c.student.full_name }}</strong>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-tag"></i>
+                    {{ c.category.name }}
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    {{ c.created_at|date:"d.m.Y H:i" }}
+                </div>
+                {% if c.assigned_to %}
+                <div class="meta-item">
+                    <i class="fas fa-user-tie"></i>
+                    Javobgar: {{ c.assigned_to.full_name }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="complaint-content">
+                {{ c.content }}
+            </div>
+
+            {% if c.co_authors.count > 0 %}
+            <div class="coauthors-badge">
+                <i class="fas fa-users"></i>
+                {{ c.co_authors.count }} hammuallif
+            </div>
+            {% endif %}
+
+            <div class="complaint-actions">
+                <a href="{% url 'complaint_detail' c.uuid %}" class="btn-view">
+                    <i class="fas fa-eye"></i> Ko'rish
+                </a>
+
+                {% if c.is_owner %}
+                    <!-- O'z shikoyati -->
+                    <button class="btn-join btn-disabled" disabled>
+                        <i class="fas fa-check"></i> Sizniki
+                    </button>
+                {% elif c.is_coauthor %}
+                    <!-- Hammuallif -->
+                    <form method="POST" action="{% url 'leave_as_coauthor' c.uuid %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-leave" style="width: 100%;">
+                            <i class="fas fa-sign-out-alt"></i> Chiqish
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Qo'shilish -->
+                    <form method="POST" action="{% url 'join_as_coauthor' c.uuid %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-join" style="width: 100%;">
+                            <i class="fas fa-user-plus"></i> Qo'shilish
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>Hozircha ochiq shikoyatlar yo'q</h3>
+        <p>Yangi shikoyatlar paydo bo'lganda bu yerda ko'rinadi</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
